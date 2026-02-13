@@ -1,32 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
     android:background="#F5F7FA">
 
+    <Button
+        android:id="@+id/btnFav"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:text="★"
+        android:textColor="#0055A4"
+        android:textSize="22sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
     <TextView
         android:id="@+id/tvHeader"
-        android:layout_width="wrap_content"
+        android:layout_width="310dp"
         android:layout_height="wrap_content"
-        android:text="SNTF: Alger - Thenia - Tizi Ouzou"
-        android:textSize="22sp"
-        android:textStyle="bold"
+        android:layout_marginTop="5dp"
+        android:text="DZTrain"
         android:textColor="#0055A4"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:textSize="22sp"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/layoutStart"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-        android:layout_width="0dp"
+        android:layout_width="310dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="8dp"
         android:hint="From (Starting Station)"
         app:layout_constraintTop_toBottomOf="@id/tvHeader"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btnSwap">
+        app:layout_constraintStart_toStartOf="parent">
 
         <AutoCompleteTextView
             android:id="@+id/startStation"
@@ -38,25 +52,24 @@
     <Button
         android:id="@+id/btnSwap"
         style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="60dp"
+        android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:text="⇄"
         android:textSize="26sp"
         android:textColor="#0055A4"
         app:layout_constraintBottom_toBottomOf="@+id/layoutStart"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/layoutStart" />
+        app:layout_constraintTop_toBottomOf="@+id/btnFav" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/layoutTarget"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_width="310dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="5dp"
         android:hint="To (Target Station)"
-        app:layout_constraintTop_toBottomOf="@id/layoutStart"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/layoutStart">
+        app:layout_constraintTop_toBottomOf="@id/layoutStart">
 
         <AutoCompleteTextView
             android:id="@+id/targetStation"
@@ -70,39 +83,68 @@
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="8dp"
         android:text="Departure Time: After 00:00"
         app:layout_constraintTop_toBottomOf="@id/layoutTarget" />
 
     <Button
         android:id="@+id/btnSearch"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:backgroundTint="#0055A4"
         android:text="Search Trains"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/btnTime" />
 
-    <TextView
-        android:id="@+id/tvNoResults"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:text="No trains found for this selection."
-        android:textColor="#D32F2F"
+    <Button
+        android:id="@+id/btnReset"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="5dp"
+        android:text="↻"
+        android:textColor="#0055A4"
+        android:textStyle="bold"
+        android:textSize="26sp"
+        app:layout_constraintBottom_toBottomOf="@+id/layoutTarget"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnSwap" />
+
+    <ImageView
+        android:id="@+id/ivNoResults"
+        android:layout_width="350dp"
+        android:layout_height="350dp"
+        android:src="@drawable/r404"
         android:visibility="gone"
+        android:alpha="0.7"
+        android:layout_marginTop="17dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnSearch" />
+        app:layout_constraintTop_toTopOf="@+id/layoutTarget" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="6dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnSearch" />
+        app:layout_constraintTop_toBottomOf="@id/favoritesRecyclerView" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/favoritesRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="8dp"
+        android:orientation="horizontal"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:clipToPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/btnSearch"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
