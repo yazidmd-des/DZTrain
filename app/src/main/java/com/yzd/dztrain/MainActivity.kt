@@ -1,9 +1,13 @@
 package com.yzd.dztrain
 
+import android.app.AlertDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,18 +18,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.util.*
 
 // --- DATA MODELS ---
 data class Stop(val name: String, val time: String)
 data class Train(val id: String, val stops: List<Stop>)
-data class SearchResult(
-    val id: String,
-    val depTime: String,
-    val arrTime: String,
-    val from: String,
-    val to: String,
-    val stops: List<Stop>
-)
 
 data class FavoriteRoute(val from: String, val to: String, val time: String)
 
@@ -37,9 +34,9 @@ object TrainRepository {
         // --- ALGER -> THENIA (Targeting your specific train numbers) ---
         Train("27", listOf(Stop("Alger", "06:30"), Stop("Agha", "06:33"), Stop("Ateliers", "06:36"), Stop("Hussein Dey", "06:40"), Stop("Caroubier", "06:43"), Stop("El Harrach", "06:46"), Stop("Oued Smar", "06:51"), Stop("Bab Ezzouar", "06:54"), Stop("Dar El Beida", "06:57"), Stop("Rouiba", "07:02"), Stop("Rouiba Ind", "07:04"), Stop("Reghaia Ind", "07:06"), Stop("Reghaia", "07:07"), Stop("Boudouaou", "07:13"), Stop("Corso", "07:16"), Stop("Boumerdes", "07:20"), Stop("Tidjelabine", "07:24"), Stop("Thenia", "07:29"))),
         // Morning El Affroun Connection
-        Train("B152/153", listOf(Stop("Oued Smar", "7:00"), Stop("Bab Ezzouar", "7:03"), Stop("Dar El Beida", "7:06"), Stop("Rouiba", "7:12"), Stop("Rouiba Ind", "7:15"), Stop("Reghaia Ind", "7:16"), Stop("Reghaia", "7:18"), Stop("Boudouaou", "7:24"), Stop("Corso", "7:28"), Stop("Boumerdes", "7:32"), Stop("Tidjelabine", "7:36"), Stop("Thenia", "7:41"))),
+        Train("B152/153", listOf(Stop("Oued Smar", "07:00"), Stop("Bab Ezzouar", "07:03"), Stop("Dar El Beida", "07:06"), Stop("Rouiba", "07:12"), Stop("Rouiba Ind", "07:15"), Stop("Reghaia Ind", "07:16"), Stop("Reghaia", "07:18"), Stop("Boudouaou", "07:24"), Stop("Corso", "07:28"), Stop("Boumerdes", "07:32"), Stop("Tidjelabine", "07:36"), Stop("Thenia", "07:41"))),
         // Morning Zéralda Connection
-        Train("B506/101", listOf(Stop("Oued Smar", "8:42"), Stop("Bab Ezzouar", "8:46"), Stop("Dar El Beida", "8:49"), Stop("Rouiba", "8:55"), Stop("Rouiba Ind", "8:58"), Stop("Reghaia Ind", "8:59"), Stop("Reghaia", "9:01"), Stop("Boudouaou", "9:07"), Stop("Corso", "9:10"), Stop("Boumerdes", "9:14"), Stop("Tidjelabine", "9:18"), Stop("Thenia", "9:23"))),
+        Train("B506/101", listOf(Stop("Oued Smar", "08:42"), Stop("Bab Ezzouar", "08:46"), Stop("Dar El Beida", "08:49"), Stop("Rouiba", "08:55"), Stop("Rouiba Ind", "08:58"), Stop("Reghaia Ind", "08:59"), Stop("Reghaia", "09:01"), Stop("Boudouaou", "09:07"), Stop("Corso", "09:10"), Stop("Boumerdes", "09:14"), Stop("Tidjelabine", "09:18"), Stop("Thenia", "09:23"))),
         // Afternoon Zéralda Connection (Short Route)
         Train("B508/103", listOf(Stop("Oued Smar", "13:11"), Stop("Bab Ezzouar", "13:14"), Stop("Dar El Beida", "13:17"), Stop("Rouiba", "13:23"), Stop("Rouiba Ind", "13:25"), Stop("Reghaia Ind", "13:26"), Stop("Reghaia", "13:30"))),
         // Afternoon El Affroun Connection
@@ -165,12 +162,12 @@ object TrainRepository {
 
         // --- THENIA -> ALGER (Targeting your specific train numbers) ---
 
-        Train("B100/505 Zéralda", listOf(Stop("Thenia", "5:55"), Stop("Tidjelabine", "6:00"), Stop("Boumerdes", "6:04"), Stop("Corso", "6:10"), Stop("Boudouaou", "6:14"), Stop("Reghaia", "6:19"), Stop("Reghaia Ind", "6:22"), Stop("Rouiba Ind", "6:23"), Stop("Rouiba", "6:25"), Stop("Dar El Beida", "6:31"), Stop("Bab Ezzouar", "6:35"), Stop("Oued Smar", "6:37"))),
+        Train("B100/505 Zéralda", listOf(Stop("Thenia", "05:55"), Stop("Tidjelabine", "06:00"), Stop("Boumerdes", "06:04"), Stop("Corso", "06:10"), Stop("Boudouaou", "06:14"), Stop("Reghaia", "06:19"), Stop("Reghaia Ind", "06:22"), Stop("Rouiba Ind", "06:23"), Stop("Rouiba", "06:25"), Stop("Dar El Beida", "06:31"), Stop("Bab Ezzouar", "06:35"), Stop("Oued Smar", "06:37"))),
         Train("22", listOf(Stop("Thenia", "06:00"), Stop("Tidjelabine", "06:04"), Stop("Boumerdes", "06:08"), Stop("Corso", "06:12"), Stop("Boudouaou", "06:15"), Stop("Reghaia", "06:21"), Stop("Reghaia Ind", "06:23"), Stop("Rouiba Ind", "06:25"), Stop("Rouiba", "06:26"), Stop("Dar El Beida", "06:32"), Stop("Bab Ezzouar", "06:35"), Stop("Oued Smar", "06:39"), Stop("El Harrach", "06:44"), Stop("Caroubier", "06:47"), Stop("Hussein Dey", "06:50"), Stop("Ateliers", "06:54"), Stop("Agha", "06:57"), Stop("Alger", "07:02"))),
         Train("28", listOf(Stop("Thenia", "06:45"), Stop("Tidjelabine", "06:49"), Stop("Boumerdes", "06:53"), Stop("Corso", "06:58"), Stop("Boudouaou", "07:01"), Stop("Reghaia", "07:07"), Stop("Reghaia Ind", "07:09"), Stop("Rouiba Ind", "07:11"), Stop("Rouiba", "07:12"), Stop("Dar El Beida", "07:18"), Stop("Bab Ezzouar", "07:21"), Stop("Oued Smar", "07:24"), Stop("El Harrach", "07:29"), Stop("Caroubier", "07:32"), Stop("Hussein Dey", "07:35"), Stop("Ateliers", "07:39"), Stop("Agha", "07:42"), Stop("Alger", "07:47"))),
         Train("12", listOf(Stop("Thenia", "07:00"), Stop("Boumerdes", "07:08"), Stop("Reghaia", "07:18"), Stop("Rouiba", "07:24"), Stop("Dar El Beida", "07:30"), Stop("El Harrach", "07:38"), Stop("Agha", "07:48"))),
         Train("34", listOf(Stop("Thenia", "08:05"), Stop("Tidjelabine", "08:09"), Stop("Boumerdes", "08:13"), Stop("Corso", "08:17"), Stop("Boudouaou", "08:20"), Stop("Reghaia", "08:26"), Stop("Reghaia Ind", "08:28"), Stop("Rouiba Ind", "08:30"), Stop("Rouiba", "08:31"), Stop("Dar El Beida", "08:37"), Stop("Bab Ezzouar", "08:40"), Stop("Oued Smar", "08:43"), Stop("El Harrach", "08:48"), Stop("Caroubier", "08:51"), Stop("Hussein Dey", "08:54"), Stop("Ateliers", "08:58"), Stop("Agha", "09:01"), Stop("Alger", "09:05"))),
-        Train("B126/127 El Affroun", listOf(Stop("Thenia", "8:35"), Stop("Tidjelabine", "8:40"), Stop("Boumerdes", "8:45"), Stop("Corso", "8:50"), Stop("Boudouaou", "8:55"), Stop("Reghaia", "9:00"), Stop("Reghaia Ind", "9:03"), Stop("Rouiba Ind", "9:04"), Stop("Rouiba", "9:06"), Stop("Dar El Beida", "9:12"), Stop("Bab Ezzouar", "9:15"), Stop("Oued Smar", "9:19"))),
+        Train("B126/127 El Affroun", listOf(Stop("Thenia", "08:35"), Stop("Tidjelabine", "08:40"), Stop("Boumerdes", "08:45"), Stop("Corso", "08:50"), Stop("Boudouaou", "08:55"), Stop("Reghaia", "09:00"), Stop("Reghaia Ind", "09:03"), Stop("Rouiba Ind", "09:04"), Stop("Rouiba", "09:06"), Stop("Dar El Beida", "09:12"), Stop("Bab Ezzouar", "09:15"), Stop("Oued Smar", "09:19"))),
         Train("40", listOf(Stop("Thenia", "09:25"), Stop("Tidjelabine", "09:29"), Stop("Boumerdes", "09:33"), Stop("Corso", "09:37"), Stop("Boudouaou", "09:40"), Stop("Reghaia", "09:46"), Stop("Rouiba", "09:51"), Stop("Dar El Beida", "09:57"), Stop("Bab Ezzouar", "10:00"), Stop("Oued Smar", "10:03"), Stop("El Harrach", "10:08"), Stop("Caroubier", "10:12"), Stop("Hussein Dey", "10:15"), Stop("Ateliers", "10:19"), Stop("Agha", "10:22"), Stop("Alger", "10:27"))),
         Train("B102/507 Zéralda", listOf(Stop("Thenia", "10:20"), Stop("Tidjelabine", "10:25"), Stop("Boumerdes", "10:30"), Stop("Corso", "10:35"), Stop("Boudouaou", "10:40"), Stop("Reghaia", "10:44"), Stop("Reghaia Ind", "10:47"), Stop("Rouiba Ind", "10:48"), Stop("Rouiba", "10:50"), Stop("Dar El Beida", "10:54"), Stop("Bab Ezzouar", "10:57"), Stop("Oued Smar", "11:01"))),
         Train("44", listOf(Stop("Thenia", "10:35"), Stop("Tidjelabine", "10:39"), Stop("Boumerdes", "10:43"), Stop("Corso", "10:47"), Stop("Boudouaou", "10:50"), Stop("Reghaia", "10:56"), Stop("Rouiba", "11:01"), Stop("Dar El Beida", "11:07"), Stop("Bab Ezzouar", "11:10"), Stop("Oued Smar", "11:13"), Stop("El Harrach", "11:23"), Stop("Caroubier", "11:27"), Stop("Hussein Dey", "11:30"), Stop("Ateliers", "11:34"), Stop("Agha", "11:37"), Stop("Alger", "11:42"))),
@@ -330,10 +327,19 @@ object TrainRepository {
 
 class MainActivity : AppCompatActivity() {
 
-    private var selectedTime = ""
-
+    private var selectedTime: String = "00:00"
     private var trainAdapter: TrainAdapter? = null
 
+    private lateinit var startInput: AutoCompleteTextView
+    private lateinit var targetInput: AutoCompleteTextView
+    private lateinit var btnFav: Button
+    private lateinit var btnSearch: Button
+    private lateinit var btnReset: Button
+    private lateinit var btnSwap: Button
+    private lateinit var ivNoResults: ImageView
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var tvHeader: TextView
+    private lateinit var btnTime: Button
     private fun saveFavorite(from: String, to: String) {
         if (from.isEmpty() || to.isEmpty()) return
 
@@ -392,23 +398,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private lateinit var startInput: AutoCompleteTextView
-    private lateinit var targetInput: AutoCompleteTextView
-    private lateinit var btnFav: Button
-    private lateinit var btnSearch: Button
-    private lateinit var btnReset: Button
-    private lateinit var btnSwap: Button
-    private lateinit var ivNoResults: ImageView
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var tvHeader: TextView
-    private lateinit var btnTime: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        updateFavoritesUI()
 
         // Get current time from the system
         val calendar = java.util.Calendar.getInstance()
@@ -432,6 +426,15 @@ class MainActivity : AppCompatActivity() {
         tvHeader = findViewById<TextView>(R.id.tvHeader)
         btnFav = findViewById<Button>(R.id.btnFav)
 
+        trainAdapter = TrainAdapter(
+            list = emptyList(),
+            onItemClick = { train -> showStopsPopup(this, train) },
+            onLongClick = { train -> shareTrainDetails(train) }
+        )
+
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = trainAdapter
+
         btnFav.setOnClickListener {
             val from = startInput.text.toString()
             val to = targetInput.text.toString()
@@ -446,7 +449,7 @@ class MainActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         // Setup Autocomplete
-        val stationAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, TrainRepository.stations)
+        val stationAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, TrainRepository.stations)
         startInput.setAdapter(stationAdapter)
         targetInput.setAdapter(stationAdapter)
 
@@ -459,15 +462,12 @@ class MainActivity : AppCompatActivity() {
 
         // Time Picker
         btnTime.setOnClickListener {
-            // Get fresh time in case the user has been on the app for a while
-            val now = java.util.Calendar.getInstance()
-            val h = now.get(java.util.Calendar.HOUR_OF_DAY)
-            val m = now.get(java.util.Calendar.MINUTE)
-
-            TimePickerDialog(this, { _, hour, minute ->
+            val cal = Calendar.getInstance()
+            val timeSetListener = TimePickerDialog.OnTimeSetListener { _, hour, minute ->
                 selectedTime = String.format("%02d:%02d", hour, minute)
-                btnTime.text = "Departure Time $selectedTime"
-            }, h, m, true).show() // Opens at current hour/minute
+                btnTime.text = "Time: $selectedTime"
+            }
+            TimePickerDialog(this, timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show()
         }
 
         // Search Logic
@@ -475,8 +475,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnReset.setOnClickListener {
-            targetInput.text.clear()
             startInput.text.clear()
+            targetInput.text.clear()
 
             // Reset clock to "Now"
             val now = java.util.Calendar.getInstance()
@@ -486,7 +486,7 @@ class MainActivity : AppCompatActivity() {
             )
             btnTime.text = "Departure Time $selectedTime"
 
-            // FIX: Pass ALL three required parameters to the TrainAdapter
+            // Reset RecyclerView
             trainAdapter = TrainAdapter(
                 list = emptyList(),
                 onItemClick = { train -> showStopsPopup(this, train) }, // Parameter 2
@@ -502,17 +502,29 @@ class MainActivity : AppCompatActivity() {
             }
             recyclerView.requestFocus()
         }
-
+        updateFavoritesUI()
     }
 
-    private fun shareTrainDetails(result: SearchResult) {
-        val message = "Trip Info: ${result.from} -> ${result.to}\n" +
-                "Train: ${result.id}\nDeparture: ${result.depTime}\nArrival: ${result.arrTime}"
-        val intent = Intent(Intent.ACTION_SEND).apply {
-            type = "text/plain"
-            putExtra(Intent.EXTRA_TEXT, message)
+    private fun shareTrainDetails(journey: Journey) {
+        val message = when (journey) {
+            is Journey.Direct -> {
+                val train = journey.train
+                "Trip Info: ${train.from} -> ${train.to}\n" +
+                        "Train: ${train.id}\nDeparture: ${train.depTime}\nArrival: ${train.arrTime}"
+            }
+            is Journey.Connection -> {
+                "Journey Info: ${journey.firstTrain.from} -> ${journey.secondTrain.to} (via ${journey.transferStation})\n" +
+                        "Leg 1 (Train ${journey.firstTrain.id}): ${journey.firstTrain.depTime}\n" +
+                        "Leg 2 (Train ${journey.secondTrain.id}): ${journey.secondTrain.depTime}\n" +
+                        "Total Duration: ${journey.totalDuration}"
+            }
         }
-        startActivity(Intent.createChooser(intent, "Share Schedule"))
+
+        val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(android.content.Intent.EXTRA_TEXT, message)
+        }
+        startActivity(android.content.Intent.createChooser(intent, "Share Schedule"))
     }
 
     private fun performSearch() {
@@ -525,55 +537,130 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        // 2. Filter logic using your TimeRepository and selectedTime
-        val filtered = TrainRepository.allTrains.mapNotNull { train ->
-            val sIdx = train.stops.indexOfFirst { it.name.equals(start, true) }
-            val tIdx = train.stops.indexOfFirst { it.name.equals(target, true) }
-
-            // Ensure both stations exist and the train is moving in the right direction
-            if (sIdx != -1 && tIdx != -1 && tIdx > sIdx) {
-                val dep = train.stops[sIdx].time
-                val arr = train.stops[tIdx].time
-
-                // Filter out '-' markers and apply the time filter
-                if (dep != "-" && arr != "-" && dep >= selectedTime) {
-                    SearchResult(
-                        id = train.id,
-                        depTime = dep,
-                        arrTime = arr,
-                        from = start,
-                        to = target,
-                        stops = train.stops
-                    )
-                } else null
-            } else null
-        }.sortedBy { it.depTime }
+        // 2. Fetch all possible journeys (Direct and Connections)
+        val journeys = findJourneys(start, target, selectedTime)
 
         // 3. UI Update with Fade Animation
-        if (filtered.isEmpty()) {
+        if (journeys.isEmpty()) {
             recyclerView.visibility = View.GONE
             ivNoResults.visibility = View.VISIBLE
 
-            // Reset alpha and animate the fade-in for the empty state
             ivNoResults.alpha = 0f
             ivNoResults.animate().alpha(1f).setDuration(500).start()
         } else {
             ivNoResults.visibility = View.GONE
             recyclerView.visibility = View.VISIBLE
 
-            // Setup LayoutManager and Adapter
             recyclerView.layoutManager = LinearLayoutManager(this)
+
+            // Update to use Journey types and correct property mapping
             recyclerView.adapter = TrainAdapter(
-                list = filtered,
-                onItemClick = { train ->
-                    showStopsPopup(this, train) // This handles the normal tap
+                list = journeys,
+                onItemClick = { journey ->
+                    showStopsPopup(this, journey)
                 },
-                onLongClick = { train ->
-                    shareTrainDetails(train) // This handles the long press
+                onLongClick = { journey ->
+                    shareTrainDetails(journey)
                 }
             )
         }
         recyclerView.requestFocus()
+    }
+
+    private fun findJourneys(start: String, end: String, time: String): List<Journey> {
+        fun formatTime(t: String): String = if (t.length == 4 && t.contains(":")) "0$t" else t
+        val safeSelectedTime = formatTime(time)
+        val finalResults = mutableListOf<Journey>()
+        val allTrains = TrainRepository.allTrains ?: return emptyList()
+
+        // 1. Direct Trains Logic
+        allTrains.forEach { train ->
+            val sIdx = train.stops.indexOfFirst { it.name.equals(start, true) }
+            val tIdx = train.stops.indexOfFirst { it.name.equals(end, true) }
+
+            if (sIdx != -1 && tIdx != -1 && tIdx > sIdx) {
+                val dep = train.stops[sIdx].time
+                val arr = train.stops[tIdx].time
+                if (dep != "-" && arr != "-" && formatTime(dep) >= safeSelectedTime) {
+                    // Determine Line Name based on the full train route
+                    val lineName = "${train.stops.first().name} ➔ ${train.stops.last().name}"
+
+                    finalResults.add(Journey.Direct(SearchResult(
+                        id = train.id, depTime = dep, arrTime = arr,
+                        from = train.stops[sIdx].name, to = train.stops[tIdx].name,
+                        stops = train.stops.subList(sIdx, tIdx + 1), // Only concerned stops
+                        isHoliday = isHolidayTrain(train.id),
+                        lineName = lineName,
+                        fullTrainStops = train.stops // Store all for toggle feature
+                    )))
+                }
+            }
+        }
+
+        // 2. Connection Logic (with Wait Time)
+        val hubs = listOf("El Harrach", "Birtouta", "Bab Ezzouar", "Oued Smar")
+        for (hub in hubs) {
+            if (start.equals(hub, true) || end.equals(hub, true)) continue
+
+            val leg1Trains = allTrains.filter { t ->
+                val sIdx = t.stops.indexOfFirst { it.name.equals(start, true) }
+                val hIdx = t.stops.indexOfFirst { it.name.equals(hub, true) }
+                sIdx != -1 && hIdx != -1 && hIdx > sIdx && formatTime(t.stops[sIdx].time) >= safeSelectedTime
+            }
+
+            for (t1 in leg1Trains) {
+                val sIdx1 = t1.stops.indexOfFirst { it.name.equals(start, true) }
+                val hIdx1 = t1.stops.indexOfFirst { it.name.equals(hub, true) }
+                val arrHub = t1.stops[hIdx1].time
+                if (arrHub == "-") continue
+
+                val leg2Trains = allTrains.filter { t2 ->
+                    val hIdx = t2.stops.indexOfFirst { it.name.equals(hub, true) }
+                    val eIdx = t2.stops.indexOfFirst { it.name.equals(end, true) }
+                    hIdx != -1 && eIdx != -1 && eIdx > hIdx && formatTime(t2.stops[hIdx].time) > formatTime(arrHub)
+                }
+
+                for (t2 in leg2Trains) {
+                    val hIdx2 = t2.stops.indexOfFirst { it.name.equals(hub, true) }
+                    val eIdx2 = t2.stops.indexOfFirst { it.name.equals(end, true) }
+
+                    val depTime = t1.stops[sIdx1].time
+                    val arrTime = t2.stops[eIdx2].time
+
+                    // Calculate elegant wait time and total duration
+                    val waitTime = calculateDuration(arrHub, t2.stops[hIdx2].time)
+                    val tripDuration = calculateDuration(depTime, arrTime)
+
+                    finalResults.add(Journey.Connection(
+                        firstTrain = SearchResult(
+                            t1.id, depTime, arrHub, start, hub,
+                            t1.stops.subList(sIdx1, hIdx1 + 1), isHolidayTrain(t1.id),
+                            "${t1.stops.first().name} ➔ ${t1.stops.last().name}", t1.stops
+                        ),
+                        secondTrain = SearchResult(
+                            t2.id, t2.stops[hIdx2].time, arrTime, hub, end,
+                            t2.stops.subList(hIdx2, eIdx2 + 1), isHolidayTrain(t2.id),
+                            "${t2.stops.first().name} ➔ ${t2.stops.last().name}", t2.stops
+                        ),
+                        transferStation = hub,
+                        totalDuration = "$tripDuration (Wait: $waitTime)"
+                    ))
+                }
+            }
+        }
+
+        // 3. Sorting: Direct First, then by Time
+        return finalResults.distinctBy {
+            when(it) {
+                is Journey.Direct -> "D-${it.train.id}-${it.train.depTime}"
+                is Journey.Connection -> "C-${it.firstTrain.id}-${it.secondTrain.id}-${it.firstTrain.depTime}"
+            }
+        }.sortedWith(compareBy({ if (it is Journey.Direct) 0 else 1 }, {
+            when(it) {
+                is Journey.Direct -> formatTime(it.train.depTime)
+                is Journey.Connection -> formatTime(it.firstTrain.depTime)
+            }
+        }))
     }
 
     private fun updateFavoritesUI() {
@@ -629,114 +716,244 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, "Favorite deleted successfully!", Toast.LENGTH_SHORT).show()
     }
 
-    private fun showStopsPopup(context: Context, train: SearchResult) {
+    private fun showStopsPopup(context: Context, journey: Journey) {
         val builder = android.app.AlertDialog.Builder(context)
+        var isShowingAll = false
 
-        val headerColor = when {
-            train.id == "12" || train.id == "15" -> "#FB8C00"
-            train.id.startsWith("15") || train.id.startsWith("B5") -> "#2E7D32"
-            train.id.startsWith("B1") || train.id.startsWith("10") -> "#1976D2"
+        fun getHeaderColor(trainId: String): String = when {
+            trainId == "12" || trainId == "15" -> "#FB8C00"
+            trainId.startsWith("15") || trainId.startsWith("B5") -> "#2E7D32"
+            trainId.startsWith("B1") || trainId.startsWith("10") -> "#1976D2"
             else -> "#7B1FA2"
         }
 
-        val titleView = android.widget.TextView(context).apply {
-            val label = if (isHolidayTrain(train.id)) " (Fridays/Holidays)" else ""
-            text = "Train ${train.id}$label"
-            textSize = 20f
-            setPadding(40, 40, 40, 40)
-            setTextColor(android.graphics.Color.WHITE)
-            setBackgroundColor(android.graphics.Color.parseColor(headerColor))
+        fun formatStops(train: SearchResult, showAll: Boolean): String {
+            val stopsToDisplay = if (showAll) train.fullTrainStops else train.stops
+            val sb = StringBuilder()
+            stopsToDisplay.forEach { stop ->
+                val prefix = if (stop.time == "-") " ○ " else " ● "
+                val name = stop.name
+                val dotPadding = ".".repeat(maxOf(1, 25 - name.length))
+                sb.append("$prefix$name $dotPadding ${stop.time}\n")
+            }
+            return sb.toString()
         }
-        builder.setCustomTitle(titleView)
 
-        // Using .name here to fix your 'unresolved station' error
-        val stopsList = train.stops.joinToString("\n") { " ▪  ${it.name} : ${it.time}" }
+        // --- NEW: Custom Header Layout ---
+        val headerLayout = android.widget.RelativeLayout(context).apply {
+            setPadding(50, 40, 50, 40)
+        }
+
+        val tvIdLeft = android.widget.TextView(context).apply {
+            textSize = 17f
+            setTextColor(android.graphics.Color.WHITE)
+            typeface = android.graphics.Typeface.DEFAULT_BOLD
+            layoutParams = android.widget.RelativeLayout.LayoutParams(
+                android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT,
+                android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT
+            ).apply { addRule(android.widget.RelativeLayout.ALIGN_PARENT_START) }
+        }
+
+        val tvRouteRight = android.widget.TextView(context).apply {
+            textSize = 14f
+            setTextColor(android.graphics.Color.WHITE)
+            layoutParams = android.widget.RelativeLayout.LayoutParams(
+                android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT,
+                android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                addRule(android.widget.RelativeLayout.ALIGN_PARENT_END)
+                addRule(android.widget.RelativeLayout.CENTER_VERTICAL)
+            }
+        }
+
+        headerLayout.addView(tvIdLeft)
+        headerLayout.addView(tvRouteRight)
 
         val messageView = android.widget.TextView(context).apply {
-            text = stopsList
-            textSize = 16f
-            setPadding(40, 40, 40, 40)
-            // FIX: Using setLineSpacing instead of = assignment
-            setLineSpacing(0f, 1.4f)
-            setTextColor(android.graphics.Color.DKGRAY)
+            textSize = 14f
+            setPadding(50, 40, 50, 40)
+            setLineSpacing(8f, 1.2f)
+            setTextColor(android.graphics.Color.parseColor("#374151"))
+            typeface = android.graphics.Typeface.MONOSPACE
         }
+
+        fun updateContent() {
+            val finalContent = StringBuilder()
+            when (journey) {
+                is Journey.Direct -> {
+                    val train = journey.train
+                    val label = if (isHolidayTrain(train.id)) " (Fri/Hol)" else ""
+
+                    tvIdLeft.text = "Train ${train.id}$label"
+                    tvRouteRight.text = train.lineName
+
+                    headerLayout.setBackgroundColor(android.graphics.Color.parseColor(getHeaderColor(train.id)))
+                    finalContent.append(formatStops(train, isShowingAll))
+                }
+                is Journey.Connection -> {
+                    tvIdLeft.text = "Connection"
+                    tvRouteRight.text = "${journey.firstTrain.from} ➔ ${journey.secondTrain.to}"
+
+                    headerLayout.setBackgroundColor(android.graphics.Color.parseColor("#1F2937"))
+                    finalContent.append("LEG 1: ${journey.firstTrain.id}\n")
+                    finalContent.append(formatStops(journey.firstTrain, isShowingAll))
+                    finalContent.append("\nTRANSFER: ${journey.transferStation}\n")
+                    finalContent.append("${journey.totalDuration}\n\n")
+                    finalContent.append("LEG 2: ${journey.secondTrain.id}\n")
+                    finalContent.append(formatStops(journey.secondTrain, isShowingAll))
+                }
+            }
+            messageView.text = finalContent.toString()
+        }
+
+        updateContent()
+        builder.setCustomTitle(headerLayout)
 
         val scrollView = android.widget.ScrollView(context)
         scrollView.addView(messageView)
-
         builder.setView(scrollView)
+
         builder.setPositiveButton("Close", null)
-        builder.show()
+        builder.setNeutralButton(if (isShowingAll) "Trip Only" else "All Stops") { _, _ -> }
+
+        val alertDialog = builder.create()
+        alertDialog.show()
+
+        alertDialog.getButton(android.app.AlertDialog.BUTTON_NEUTRAL).setOnClickListener {
+            isShowingAll = !isShowingAll
+            updateContent()
+            (it as android.widget.Button).text = if (isShowingAll) "Trip Only" else "All Stops"
+        }
     }
 
+}
+
+private fun calculateDuration(startTime: String, endTime: String): String {
+    return try {
+        // 1. Define the format used in your SNTF data (HH:mm)
+        val sdf = java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault())
+
+        // 2. Parse the strings into Date objects
+        val date1 = sdf.parse(startTime)
+        val date2 = sdf.parse(endTime)
+
+        if (date1 != null && date2 != null) {
+            // 3. Calculate difference in milliseconds
+            var diff = date2.time - date1.time
+
+            // 4. Handle overnight trips (if arrival is the next day)
+            if (diff < 0) {
+                diff += 24 * 60 * 60 * 1000
+            }
+
+            val hours = diff / (1000 * 60 * 60)
+            val minutes = (diff / (1000 * 60)) % 60
+
+            // 5. Format the output string based on the duration
+            if (hours > 0) {
+                "${hours}h${String.format("%02d", minutes)}"
+            } else {
+                "${minutes}min"
+            }
+        } else {
+            "N/A"
+        }
+    } catch (e: Exception) {
+        "N/A"
+    }
 }
 
 fun isHolidayTrain(id: String): Boolean {
     return id.contains("H")}
 // --- RECYCLERVIEW ADAPTER ---
 class TrainAdapter(
-    private val list: List<SearchResult>,
-    private val onItemClick: (SearchResult) -> Unit, // Add this
-    private val onLongClick: (SearchResult) -> Unit
+    private var list: List<Journey>, // Changed from SearchResult to Journey
+    private val onItemClick: (Journey) -> Unit,
+    private val onLongClick: (Journey) -> Unit
 ) : RecyclerView.Adapter<TrainAdapter.VH>() {
 
 
-    // Updated ViewHolder to match your custom item_train.xml
-    class VH(v: View) : RecyclerView.ViewHolder(v) {
-        val layout: LinearLayout = v.findViewById(R.id.rowLayout)
-        val tvId: TextView = v.findViewById(R.id.tvTrainId)
-        val tvDep: TextView = v.findViewById(R.id.tvDepTime)
-        val tvArr: TextView = v.findViewById(R.id.tvArrTime)
+    inner class VH(v: View) : RecyclerView.ViewHolder(v) {
+        val tvId = v.findViewById<TextView>(R.id.tvTrainId)
+        val tvRoute = v.findViewById<TextView>(R.id.tvRouteTitle)
+        val tvVia = v.findViewById<TextView>(R.id.tvViaStation) // New
+        val tvDuration = v.findViewById<TextView>(R.id.tvTotalDuration) // New
+        val transferDot = v.findViewById<View>(R.id.transferDot) // New
+        val tvDep = v.findViewById<TextView>(R.id.tvDepTime)
+        val tvArr = v.findViewById<TextView>(R.id.tvArrTime)
+        val tvLineBadge: TextView = v.findViewById(R.id.tvLineBadge)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        VH(LayoutInflater.from(parent.context).inflate(R.layout.item_train, parent, false))
+        VH(LayoutInflater.from(parent.context).inflate(R.layout.item_journey, parent, false))
 
 
     // --- THE UPDATED FUNCTION ---
     override fun onBindViewHolder(holder: VH, position: Int) {
-        val item = list[position]
+        val journey = list[position]
+        val context = holder.itemView.context
 
-        // 1. Determine if it's a holiday train
-        val isHoliday = isHolidayTrain(item.id)
+        when (journey) {
+            is Journey.Direct -> {
+                val train = journey.train
 
-        // 2. Set the stroke (border) color
-        val strokeColor = if (isHoliday) "#D32F2F" else "#00000000" // Red for Holidays
+                // 1. Header Info (Train ID)
+                holder.tvId.text = "Train ${train.id}"
+                holder.tvLineBadge.text = journey.train.lineName
+                holder.tvLineBadge.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#1976D2")) // Blue for Direct
+                holder.tvLineBadge.visibility = View.VISIBLE
 
-        holder.tvId.text = "Train ${item.id}"
-        holder.tvDep.text = item.depTime
-        holder.tvArr.text = item.arrTime
+                // 2. Route and Duration
+                holder.tvRoute.text = "${train.from} ➔ ${train.to}"
+                holder.tvDuration.text = calculateDuration(train.depTime, train.arrTime)
 
-        val baseColor = when {
-            item.id == "12" || item.id == "15" -> "#FFF3E0" // Light Orange (Bouira)
-            item.id.startsWith("15") || item.id.startsWith("B5") -> "#E8F5E9" // Light Green (Zéralda)
-            item.id.startsWith("B1") -> "#E3F2FD" // Light Blue (El Affroun)
-            item.id.startsWith("10") || item.id.startsWith("119") ||
-                    item.id.startsWith("121") || item.id.startsWith("B13") ||
-                    item.id.startsWith("B14") -> "#F3E5F5" // Light Purple/Yellow (Tizi Ouzou)
-            position % 2 == 0 -> "#F5F5F5" // Grey
-            else -> "#FFFFFF" // White
-        }
+                // 3. Hide Transfer-specific UI
+                holder.tvVia.visibility = View.GONE
+                holder.transferDot.visibility = View.GONE
 
-        // 3. Apply Background and Stroke
-        val background = android.graphics.drawable.GradientDrawable().apply {
-            setColor(android.graphics.Color.parseColor(baseColor))
-            if (isHoliday) {
-                setStroke(5, android.graphics.Color.parseColor(strokeColor)) // 5px red border
-            } else {
-                setStroke(0, android.graphics.Color.TRANSPARENT)
+                // 4. Time and Timeline
+                holder.tvDep.text = train.depTime
+                holder.tvArr.text = train.arrTime
+
+                // 5. Your Holiday Logic
+                if (train.isHoliday) {
+                    holder.tvId.append(" (Holidays Only)")
+                    holder.tvId.setTextColor(Color.RED)
+                } else {
+                    holder.tvId.setTextColor(Color.parseColor("#6B7280"))
+                }
             }
-            cornerRadius = 8f // Optional: matches card-like rounded corners
+
+            is Journey.Connection -> {
+                // 1. Header Info (Showing both Train IDs)
+                holder.tvId.text = "Train ${journey.firstTrain.id} + ${journey.secondTrain.id}"
+                holder.tvId.setTextColor(Color.parseColor("#6B7280"))
+                holder.tvLineBadge.text = "Connection"
+                holder.tvLineBadge.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#374151"))
+
+                // 2. Route and "Via" Label
+                holder.tvRoute.text = "${journey.firstTrain.from} ➔ ${journey.secondTrain.to}"
+                holder.tvVia.text = "via ${journey.transferStation}"
+                holder.tvVia.visibility = View.VISIBLE
+
+                // 3. Timeline and Transfer Dot
+                holder.transferDot.visibility = View.VISIBLE
+                holder.tvDep.text = journey.firstTrain.depTime
+                holder.tvArr.text = journey.secondTrain.arrTime
+                holder.tvDuration.text = journey.totalDuration
+
+                // 4. Connection Holiday Logic
+                if (journey.firstTrain.isHoliday || journey.secondTrain.isHoliday) {
+                    holder.tvId.append(" (Holidays Only)")
+                    holder.tvId.setTextColor(android.graphics.Color.RED)
+                }
+            }
         }
 
-        holder.layout.background = background
-
-        holder.itemView.setOnClickListener {
-            onItemClick(item)
-        }
-
+        // Click Listeners
+        holder.itemView.setOnClickListener { onItemClick(journey) }
         holder.itemView.setOnLongClickListener {
-            onLongClick(item)
+            onLongClick(journey)
             true
         }
     }
