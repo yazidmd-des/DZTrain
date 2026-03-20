@@ -1,150 +1,205 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:openDrawer="start">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
     android:background="#F5F7FA">
 
-    <Button
-        android:id="@+id/btnFav"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="50dp"
+        <ImageButton
+            android:id="@+id/btnMenu"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/ic_menu"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="#0055A4"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:id="@+id/tvHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="DZTrain"
+            android:textColor="#0055A4"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/btnMenu"
+            app:layout_constraintStart_toEndOf="@id/btnMenu"
+            app:layout_constraintTop_toTopOf="@id/btnMenu" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="★"
-        android:textColor="#0055A4"
-        android:textSize="22sp"
-        app:layout_constraintTop_toTopOf="parent"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@+id/tvHeader"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="@+id/tvHeader">
+
+        <Button
+            android:id="@+id/btnReset"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="48dp"
+            android:layout_height="wrap_content"
+            android:text="↻"
+            android:textColor="#888888"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/btnFav"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="48dp"
+            android:layout_height="wrap_content"
+            android:text="★"
+            android:textColor="#0055A4"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/searchContainerCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
+        app:layout_constraintTop_toBottomOf="@id/tvHeader">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutStart"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="48dp"
+                android:hint="From (Starting Station)"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <AutoCompleteTextView
+                    android:id="@+id/startStation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutTarget"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="48dp"
+                android:hint="To (Target Station)"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layoutStart">
+
+                <AutoCompleteTextView
+                    android:id="@+id/targetStation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/btnSwap"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:text="⇄"
+                android:textColor="#0055A4"
+                android:textSize="22sp"
+                app:layout_constraintBottom_toBottomOf="@+id/layoutTarget"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/layoutStart"
+                app:layout_constraintTop_toTopOf="@+id/layoutStart" />
+
+            <Button
+                android:id="@+id/btnTime"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Departure Time: After 00:00"
+                android:textAllCaps="false"
+                app:layout_constraintTop_toBottomOf="@id/layoutTarget" />
+
+            <Button
+                android:id="@+id/btnSearch"
+                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="#B30638"
+                android:text="Search Trains"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/btnTime" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
 
     <TextView
-        android:id="@+id/tvHeader"
-        android:layout_width="310dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="DZTrain"
-        android:textColor="#0055A4"
-        android:textSize="22sp"
-        android:textAlignment="center"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/layoutStart"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-        android:layout_width="310dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="From (Starting Station)"
-        app:layout_constraintTop_toBottomOf="@id/tvHeader"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <AutoCompleteTextView
-            android:id="@+id/startStation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="none" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <Button
-        android:id="@+id/btnSwap"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:text="⇄"
-        android:textSize="26sp"
-        android:textColor="#0055A4"
-        app:layout_constraintBottom_toBottomOf="@+id/layoutStart"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnFav" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/layoutTarget"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-        android:layout_width="310dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="5dp"
-        android:hint="To (Target Station)"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layoutStart">
-
-        <AutoCompleteTextView
-            android:id="@+id/targetStation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="none" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <Button
-        android:id="@+id/btnTime"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:id="@+id/tvFavLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Departure Time: After 00:00"
-        app:layout_constraintTop_toBottomOf="@id/layoutTarget" />
-
-    <Button
-        android:id="@+id/btnSearch"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:backgroundTint="#0055A4"
-        android:text="Search Trains"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/btnTime" />
-
-    <Button
-        android:id="@+id/btnReset"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="5dp"
-        android:text="↻"
+        android:layout_marginTop="20dp"
+        android:text="Saved Routes"
         android:textColor="#0055A4"
         android:textStyle="bold"
-        android:textSize="26sp"
-        app:layout_constraintBottom_toBottomOf="@+id/layoutTarget"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnSwap" />
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchContainerCard" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvFavorites"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:clipToPadding="false"
+        android:padding="4dp"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvFavLabel"
+        app:layout_constraintVertical_bias="1.0"
+        tools:listitem="@layout/item_favorite_card" />
 
     <ImageView
         android:id="@+id/ivNoResults"
-        android:layout_width="350dp"
-        android:layout_height="350dp"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:alpha="0.3"
         android:src="@drawable/r404"
         android:visibility="gone"
-        android:alpha="0.7"
-        android:layout_marginTop="17dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/layoutTarget" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="6dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/favoritesRecyclerView" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/favoritesRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
-        android:layout_marginBottom="8dp"
-        android:orientation="horizontal"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        android:clipToPadding="false"
-        app:layout_constraintTop_toBottomOf="@id/btnSearch"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        app:layout_constraintTop_toBottomOf="@+id/tvFavLabel" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+<com.google.android.material.navigation.NavigationView
+android:id="@+id/navView"
+android:layout_width="wrap_content"
+android:layout_height="match_parent"
+android:layout_gravity="start"
+app:headerLayout="@layout/nav_header"
+app:menu="@menu/side_menu" />
+
+    </androidx.drawerlayout.widget.DrawerLayout>

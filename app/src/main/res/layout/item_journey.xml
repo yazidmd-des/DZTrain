@@ -85,7 +85,12 @@
                 android:layout_height="wrap_content" />
             <View android:layout_width="8dp" android:layout_height="8dp" android:layout_marginHorizontal="8dp" android:background="@drawable/dot_green" />
             <View android:layout_width="0dp" android:layout_height="2dp" android:layout_weight="1" android:background="#E5E7EB" />
-            <View android:id="@+id/transferDot" android:layout_width="8dp" android:layout_height="8dp" android:background="@drawable/dot_orange_outline" />
+            <ImageView
+                android:id="@+id/transferDot"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:scaleType="centerInside"
+                android:background="@null" />
             <View android:layout_width="0dp" android:layout_height="2dp" android:layout_weight="1" android:background="#E5E7EB" />
             <View android:layout_width="8dp" android:layout_height="8dp" android:layout_marginHorizontal="8dp" android:background="@drawable/dot_dark" />
             <TextView android:id="@+id/tvArrTime" android:text="11:57" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content" />

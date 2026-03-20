@@ -1,3 +1,10 @@
+import java.util.Date
+import java.text.SimpleDateFormat
+
+fun getTimestampVersionCode(): Int {
+    return SimpleDateFormat("yyMMddHH").format(Date()).toInt()
+}
+
 plugins {
     alias(libs.plugins.android.application)
 }
@@ -8,14 +15,25 @@ android {
         version = release(36)
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
         applicationId = "com.yzd.dztrain"
         minSdk = 24
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = getTimestampVersionCode()
+        versionName = "2.1.1"
+
+        val currentDateTime = SimpleDateFormat("MMM dd, yyyy HH:mm").format(Date())
+        buildConfigField("String", "BUILD_DATE", "\"$currentDateTime\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        ndk {
+            abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64"))
+        }
     }
 
     buildTypes {

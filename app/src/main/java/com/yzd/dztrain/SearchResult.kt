@@ -1,5 +1,5 @@
 package com.yzd.dztrain
-
+import java.io.Serializable
 data class SearchResult(
     val id: String,
     val depTime: String,
@@ -8,6 +8,6 @@ data class SearchResult(
     val to: String,
     val stops: List<Stop>,
     val isHoliday: Boolean,
-    val lineName: String, // Add this
+    val lineName: String,
     val fullTrainStops: List<Stop> = emptyList() // Store original stops here for the "Show All" feature
-)
+) : Serializable

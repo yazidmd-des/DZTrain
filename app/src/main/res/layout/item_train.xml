@@ -2,17 +2,17 @@
     android:id="@+id/rowLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="16.dp"
-    android:layout_marginBottom="2.dp">
+    android:layout_marginBottom="2.dp"
+    android:orientation="vertical"
+    android:padding="16.dp">
 
     <TextView
         android:id="@+id/tvTrainId"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textStyle="bold"
-        android:textColor="#333333" />
+        android:textColor="#333333"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/tvDepTime"
